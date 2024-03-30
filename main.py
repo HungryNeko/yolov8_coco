@@ -1,23 +1,23 @@
 import cv2
 from ultralytics import YOLO
 from cv2 import getTickCount, getTickFrequency
-# 加载 YOLOv8 模型
-model = YOLO("weights/yolov8n.pt")
+
+model = YOLO("yolov8n.pt")
+model.to('cuda')
+
 # 获取摄像头内容，参数 0 表示使用默认的摄像头
 cap = cv2.VideoCapture(0)
-model.classes = ['person', 'car']  # 只显示 person 和 car 类别
-model.conf = 0.5  # 设置最小置信度阈值
 while cap.isOpened():
     loop_start = getTickCount()
     success, frame = cap.read()  # 读取摄像头的一帧图像
 
     if success:
-        results = model.predict(source=frame) # 对当前帧进行目标检测并显示结果
+        results = model.predict(source=frame,conf=0.5) # 对当前帧进行目标检测并显示结果
     else:
         continue
     annotated_frame = results[0].plot()
 
-    if False:
+    if True:
         # 中间放自己的显示程序
         loop_time = getTickCount() - loop_start
         total_time = loop_time / (getTickFrequency())
